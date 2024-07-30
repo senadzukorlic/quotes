@@ -1,9 +1,13 @@
+import React, { useContext } from "react"
+import Login from "./Pages/LogIn"
+import QuotesPage from "./Pages/QuotesPage"
+// import "./Style.css"
+import { Token } from "./Context"
+
 function App() {
-  return (
-    <div>
-      App Works!
-    </div>
-  );
+  const { token } = useContext(Token)
+
+  return <div>{token ? <QuotesPage /> : <Login />}</div>
 }
 
-export default App;
+export default App
