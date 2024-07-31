@@ -1,7 +1,7 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const { uuid } = require("uuidv4");
-const port = 8000;
+const express = require("express")
+const bodyParser = require("body-parser")
+const { uuid } = require("uuidv4")
+const port = 8000
 
 const USERS = [
   {
@@ -24,7 +24,7 @@ const USERS = [
     username: "zika",
     password: "1234",
   },
-];
+]
 
 // Mapping between token and user's id
 // token : userId
@@ -37,7 +37,7 @@ const TOKENS = {
     "49d73d43-e1bc-46b4-88a6-d802d1cc9fe9",
   "yuim98oq-e275-45a2-bc2e-b3098036d655":
     "3de3d9ff-60b1-4694-9e87-77aefea9ea0e",
-};
+}
 
 const QUOTES = [
   {
@@ -145,37 +145,37 @@ const QUOTES = [
     upvotedBy: ["49d73d43-e1bc-46b4-88a6-d802d1cc9fe9"],
     downvotedBy: [],
   },
-];
+]
 
-const app = express();
-app.use(bodyParser.json());
-app.use(require("cors")());
+const app = express()
+app.use(bodyParser.json())
+app.use(require("cors")())
 
 function getToken(req) {
-  const header = req.header("Authorization");
-  if (header == null) return null;
-  const prefix = "Bearer ";
-  if (!header.startsWith(prefix)) return null;
-  return header.slice(prefix.length);
+  const header = req.header("Authorization")
+  if (header == null) return null
+  const prefix = "Bearer "
+  if (!header.startsWith(prefix)) return null
+  return header.slice(prefix.length)
 }
 
 function identifyUser(req) {
   //   return USERS[0]
-  const token = getToken(req);
-  if (token == null) return null;
-  const userId = TOKENS[token];
-  if (userId == null) return null;
-  const user = USERS.find((user) => user.id === userId);
-  if (user == null) return null;
-  return user;
+  const token = getToken(req)
+  if (token == null) return null
+  const userId = TOKENS[token]
+  if (userId == null) return null
+  const user = USERS.find((user) => user.id === userId)
+  if (user == null) return null
+  return user
 }
 
 function getAllTags() {
   const tags = QUOTES.map((quote) => quote.tags).reduce((acc, curr) => [
     ...acc,
     ...curr,
-  ]);
-  return Array.from(new Set(tags));
+  ])
+  return Array.from(new Set(tags))
 }
 
 function transformQuote(quote, userId) {
@@ -193,24 +193,24 @@ function transformQuote(quote, userId) {
       : quote.downvotedBy.includes(userId)
       ? "downvote"
       : "none",
-  };
+  }
 }
 
 // LOGIN
 
 app.post("/sessions", (req, res) => {
-  const { username, password } = req.body;
-  const user = USERS.find((user) => user.username === username);
+  const { username, password } = req.body
+  const user = USERS.find((user) => user.username === username)
   if (user == null || user.password !== password) {
-    res.status(401).send(null);
-    return;
+    res.status(401).send(null)
+    return
   }
   const userData = Object.entries(TOKENS).find(
     ([accessToken, userId]) => userId === user.id
-  );
-  const [accessToken] = userData;
-  res.status(200).send({ accessToken });
-});
+  )
+  const [accessToken] = userData
+  res.status(200).send({ accessToken })
+})
 
 // app.delete('/sessions', (req, res) => {
 //   const user = identifyUser(req)
@@ -221,83 +221,83 @@ app.post("/sessions", (req, res) => {
 // })
 
 app.get("/tags", (req, res) => {
-  const user = identifyUser(req);
-  if (user == null) return res.status(401).send();
-  res.status(200).send(getAllTags());
-});
+  const user = identifyUser(req)
+  if (user == null) return res.status(401).send()
+  res.status(200).send(getAllTags())
+})
 
 app.get("/quotes", (req, res) => {
-  const user = identifyUser(req);
-  if (user == null) return res.status(401).send();
+  const user = identifyUser(req)
+  if (user == null) return res.status(401).send()
 
-  const tags = ((req.query.tags || "").split(",") || []).filter((x) => !!x);
-  const page = Number.parseInt(req.query.page) || 1;
-  const pageSize = Number.parseInt(req.query.pageSize) || 20;
-  const sortBy = req.query.sortBy || "upvotesCount";
-  const sortDirection = req.query.sortDirection || "desc";
+  const tags = ((req.query.tags || "").split(",") || []).filter((x) => !!x)
+  const page = Number.parseInt(req.query.page) || 1
+  const pageSize = Number.parseInt(req.query.pageSize) || 20
+  const sortBy = req.query.sortBy || "upvotesCount"
+  const sortDirection = req.query.sortDirection || "desc"
 
   const quotes = QUOTES.filter((quote) => {
-    return tags.length === 0 || quote.tags.some((tag) => tags.includes(tag));
-  });
+    return tags.length === 0 || quote.tags.some((tag) => tags.includes(tag))
+  })
   quotes.sort((a, b) => {
-    const dataA = a[sortBy];
-    const dataB = b[sortBy];
+    const dataA = a[sortBy]
+    const dataB = b[sortBy]
     return sortDirection === "asc"
       ? dataA > dataB
         ? 1
         : -1
       : dataA > dataB
       ? -1
-      : 1;
-  });
+      : 1
+  })
 
-  const start = (page - 1) * pageSize;
-  const end = page * pageSize;
+  const start = (page - 1) * pageSize
+  const end = page * pageSize
 
   res.send({
     quotesCount: quotes.length,
     quotes: quotes
       .slice(start, end)
       .map((quote) => transformQuote(quote, user.id)),
-  });
-});
+  })
+})
 
 app.get("/quotes/:id", (req, res) => {
-  const user = identifyUser(req);
-  if (user == null) return res.status(401).send();
+  const user = identifyUser(req)
+  if (user == null) return res.status(401).send()
 
-  const quote = QUOTES.find((quote) => quote.id === req.params.id);
-  if (quote == null) return res.status(404).send();
+  const quote = QUOTES.find((quote) => quote.id === req.params.id)
+  if (quote == null) return res.status(404).send()
 
-  res.send(transformQuote(quote, user.id));
-});
+  res.send(transformQuote(quote, user.id))
+})
 
 app.post("/quotes", (req, res) => {
-  const user = identifyUser(req);
-  if (user == null) return res.status(401).send();
+  const user = identifyUser(req)
+  if (user == null) return res.status(401).send()
 
-  const { content, author, tags } = req.body;
-  const errors = [];
+  const { content, author, tags } = req.body
+  const errors = []
 
-  if (!content) errors.push({ key: "content", value: "required" });
+  if (!content) errors.push({ key: "content", value: "required" })
   if (content && typeof content != "string")
-    errors.push({ key: "content", value: "wrongType" });
-  if (!author) errors.push({ key: "author", value: "required" });
+    errors.push({ key: "content", value: "wrongType" })
+  if (!author) errors.push({ key: "author", value: "required" })
   if (author && typeof author != "string")
-    errors.push({ key: "author", value: "wrongType" });
-  if (!tags) errors.push({ key: "tags", value: "required" });
+    errors.push({ key: "author", value: "wrongType" })
+  if (!tags) errors.push({ key: "tags", value: "required" })
   if (tags && !Array.isArray(tags))
-    errors.push({ key: "tags", value: "wrongType" });
+    errors.push({ key: "tags", value: "wrongType" })
 
   if (errors.length > 0) {
     const error = errors.reduce(
       (acc, curr) => ({ ...acc, [curr.key]: curr.value }),
       {}
-    );
-    return res.status(422).send(error);
+    )
+    return res.status(422).send(error)
   }
 
-  const id = uuid();
+  const id = uuid()
   const quote = {
     id,
     content,
@@ -309,78 +309,78 @@ app.post("/quotes", (req, res) => {
     createdAt: new Date().toISOString(),
     upvotedBy: [],
     downvotedBy: [],
-  };
+  }
 
-  QUOTES.push(quote);
-  res.status(201).send(transformQuote(quote, user.id));
-});
+  QUOTES.push(quote)
+  res.status(201).send(transformQuote(quote, user.id))
+})
 
 app.post("/quotes/:id/upvote", (req, res) => {
-  const user = identifyUser(req);
-  if (user == null) return res.status(401).send();
-  const quote = QUOTES.find((quote) => quote.id === req.params.id);
-  if (quote == null) return res.status(404).send();
+  const user = identifyUser(req)
+  if (user == null) return res.status(401).send()
+  const quote = QUOTES.find((quote) => quote.id === req.params.id)
+  if (quote == null) return res.status(404).send()
 
   if (quote.upvotedBy.includes(user.id))
-    return res.status(400).send({ error: `Already upvoted.` });
+    return res.status(400).send({ error: `Already upvoted.` })
   if (quote.downvotedBy.includes(user.id))
     return res
       .status(400)
-      .send({ error: `Delete the existing downvote in order to upvote.` });
+      .send({ error: `Delete the existing downvote in order to upvote.` })
 
-  quote.upvotedBy.push(user.id);
-  quote.upvotesCount++;
-  res.status(200).send(transformQuote(quote, user.id));
-});
+  quote.upvotedBy.push(user.id)
+  quote.upvotesCount++
+  res.status(200).send(transformQuote(quote, user.id))
+})
 
 app.delete("/quotes/:id/upvote", (req, res) => {
-  const user = identifyUser(req);
-  if (user == null) return res.status(401).send();
-  const quote = QUOTES.find((quote) => quote.id === req.params.id);
-  if (quote == null) return res.status(404).send();
+  const user = identifyUser(req)
+  if (user == null) return res.status(401).send()
+  const quote = QUOTES.find((quote) => quote.id === req.params.id)
+  if (quote == null) return res.status(404).send()
 
   if (!quote.upvotedBy.includes(user.id))
-    return res.status(400).send({ error: `No upvote to delete.` });
+    return res.status(400).send({ error: `No upvote to delete.` })
 
-  const indexToDelete = quote.upvotedBy.indexOf(user.id);
-  quote.upvotedBy.splice(indexToDelete, 1);
-  quote.upvotesCount--;
-  res.status(200).send(transformQuote(quote, user.id));
-});
+  const indexToDelete = quote.upvotedBy.indexOf(user.id)
+  quote.upvotedBy.splice(indexToDelete, 1)
+  quote.upvotesCount--
+  res.status(200).send(transformQuote(quote, user.id))
+})
 
 app.post("/quotes/:id/downvote", (req, res) => {
-  const user = identifyUser(req);
-  if (user == null) return res.status(401).send();
-  const quote = QUOTES.find((quote) => quote.id === req.params.id);
-  if (quote == null) return res.status(404).send();
+  const user = identifyUser(req)
+  if (user == null) return res.status(401).send()
+  const quote = QUOTES.find((quote) => quote.id === req.params.id)
+  if (quote == null) return res.status(404).send()
 
   if (quote.upvotedBy.includes(user.id))
     return res
       .status(400)
-      .send({ error: `Delete the existing upvote in order to downvote.` });
+      .send({ error: `Delete the existing upvote in order to downvote.` })
   if (quote.downvotedBy.includes(user.id))
-    return res.status(400).send({ error: `Already downvoted.` });
+    return res.status(400).send({ error: `Already downvoted.` })
 
-  quote.downvotedBy.push(user.id);
-  quote.downvotesCount++;
-  res.status(200).send(transformQuote(quote, user.id));
-});
+  quote.downvotedBy.push(user.id)
+  quote.downvotesCount++
+  res.status(200).send(transformQuote(quote, user.id))
+})
 
 app.delete("/quotes/:id/downvote", (req, res) => {
-  const user = identifyUser(req);
-  if (user == null) return res.status(401).send();
-  const quote = QUOTES.find((quote) => quote.id === req.params.id);
-  if (quote == null) return res.status(404).send();
+  const user = identifyUser(req)
+  if (user == null) return res.status(401).send()
+  const quote = QUOTES.find((quote) => quote.id === req.params.id)
+  if (quote == null) return res.status(404).send()
 
   if (!quote.downvotedBy.includes(user.id))
-    return res.status(400).send({ error: `No downvote to delete.` });
+    return res.status(400).send({ error: `No downvote to delete.` })
 
-  const indexToDelete = quote.downvotedBy.indexOf(user.id);
-  quote.downvotedBy.splice(indexToDelete, 1);
-  quote.downvotesCount--;
-  res.status(200).send(transformQuote(quote, user.id));
-});
+  const indexToDelete = quote.downvotedBy.indexOf(user.id)
+  quote.downvotedBy.splice(indexToDelete, 1)
+  quote.downvotesCount--
+  res.status(200).send(transformQuote(quote, user.id))
+})
 
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
-);
+)

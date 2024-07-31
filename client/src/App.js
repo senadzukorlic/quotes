@@ -1,13 +1,88 @@
-import React, { useContext } from "react"
+// import React, { useContext } from "react"
+// import Login from "./Pages/LogIn"
+// import QuotesPage from "./Pages/QuotesPage"
+// import "./STYLE.css"
+// import { Token } from "./Context"
+
+// function App() {
+//   const { token } = useContext(Token)
+
+//   return <div className="parentDiv">{token ? <QuotesPage /> : <Login />}</div>
+// }
+
+// export default App
+
+import React, { useState, useEffect } from "react"
+import { useAuth } from "./Context"
+import { QuoteCard } from "./Components/QuoteCard"
+import Filter from "./Components/Filter"
+import Pagination from "./Components/Pagination"
+
 import Login from "./Pages/LogIn"
-import QuotesPage from "./Pages/QuotesPage"
-// import "./Style.css"
-import { Token } from "./Context"
 
-function App() {
-  const { token } = useContext(Token)
+const App = () => {
+  const { token } = useAuth()
+  const [quotes, setQuotes] = useState([])
+  const [tags, setTags] = useState([])
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
+  const [sortBy, setSortBy] = useState("upvotesCount")
+  const [sortDirection, setSortDirection] = useState("desc")
+  const [quotesCount, setQuotesCount] = useState(0)
 
-  return <div>{token ? <QuotesPage /> : <Login />}</div>
+  useEffect(() => {
+    if (token) {
+      fetchQuotes()
+    }
+  }, [tags, page, pageSize, sortBy, sortDirection, token])
+
+  const fetchQuotes = async () => {
+    const queryParams = new URLSearchParams({
+      tags: tags.join(","),
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+    }).toString()
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/quotes?${queryParams}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      const data = await response.json()
+      setQuotes(data.quotes)
+      console.log(data.quotes)
+      setQuotesCount(data.quotesCount)
+    } catch (error) {
+      console.error("Failed to fetch quotes", error)
+    }
+  }
+
+  return (
+    <div className="parentDiv">
+      <h1>Quotes</h1>
+      {token ? (
+        <>
+          <Filter tags={tags} setTags={setTags} />
+          <QuoteCard quotes={quotes} />
+          <Pagination
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            total={quotesCount}
+          />
+        </>
+      ) : (
+        <Login />
+      )}
+    </div>
+  )
 }
 
 export default App

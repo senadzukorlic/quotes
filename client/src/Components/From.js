@@ -1,4 +1,4 @@
-import "./Form/STYLE.css"
+import "../STYLE.css"
 
 export function Form({
   onSubmit,
@@ -10,7 +10,8 @@ export function Form({
   return (
     <form className="form" onSubmit={onSubmit}>
       <input type="text" value={username} onChange={changeUsername} />
-      <input type="password" value={password} onChange={changePassword} />
+      <input type="password" value={password} onChange={changePassword} />{" "}
+      <br />
       <button type="submit">Submit</button>
     </form>
   )

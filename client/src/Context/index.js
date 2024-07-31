@@ -1,5 +1,5 @@
 import axios from "axios"
-import { createContext, useState } from "react"
+import { createContext, useState, useContext } from "react"
 
 export const Token = createContext()
 
@@ -25,3 +25,5 @@ export function TokenProvider({ children }) {
     </Token.Provider>
   )
 }
+
+export const useAuth = () => useContext(Token)

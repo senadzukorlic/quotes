@@ -1,0 +1,98 @@
+body {
+  font-family: "Roboto";
+  background-color: gray;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+  height: 200px;
+  background-color: aqua;
+  border-radius: 10px;
+}
+
+.parentDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.quotesCard {
+  width: 80%;
+  height: 400px;
+  display: flex;
+  flex-direction: row;
+  /* background-color: orange; */
+}
+
+.quotesCardDiv {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.author-image {
+  width: 300px;
+  height: 300px;
+}
+
+.ImgAndAuthorDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* padding-top: 20px; */
+}
+
+.author-name {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.quoteDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-left: 50px;
+  /* background-color: purple; */
+}
+
+.quote {
+  font-size: 25px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 200px;
+}
+
+.tag {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  padding: 5px 10px;
+  margin: 5px;
+  font-size: 0.9em;
+  color: #333;
+}
+
+.tags {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 30px;
+  /* background-color: red; */
+}
