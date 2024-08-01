@@ -22,7 +22,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  gap: 20px;
 }
 
 .quotesCard {
@@ -30,20 +30,27 @@ body {
   height: 400px;
   display: flex;
   flex-direction: row;
-  /* background-color: orange; */
+  border: 9px double black;
+  background-color: whitesmoke;
+  border-radius: 10px;
 }
 
 .quotesCardDiv {
   width: 100%;
+  border-radius: 10px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
 
 .author-image {
   width: 300px;
   height: 300px;
+  padding-left: 40px;
+  padding-top: 20px;
 }
 
 .ImgAndAuthorDiv {
@@ -51,7 +58,6 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* padding-top: 20px; */
 }
 
 .author-name {
@@ -64,17 +70,14 @@ body {
   flex-direction: column;
   justify-content: space-between;
   padding-left: 50px;
-  /* background-color: purple; */
+  width: 90%;
+
+  /* background-color: orange; */
 }
 
-.quote {
+#quote {
   font-size: 25px;
   font-weight: 500;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 200px;
 }
 
 .tag {
@@ -93,6 +96,24 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 30px;
-  /* background-color: red; */
+  /* margin-bottom: 80px; */
+  padding-top: 20px;
+}
+.quote {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  /* margin-bottom: 130px; */
+  /* padding-bottom: 100px; */
+}
+.voteDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  /* margin-bottom: 120px; */
+  /* background-color: purple; */
+  padding-right: 50px;
+  padding-bottom: 70px;
+  /* margin-bottom: 320px; */
 }

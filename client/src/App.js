@@ -1,17 +1,3 @@
-// import React, { useContext } from "react"
-// import Login from "./Pages/LogIn"
-// import QuotesPage from "./Pages/QuotesPage"
-// import "./STYLE.css"
-// import { Token } from "./Context"
-
-// function App() {
-//   const { token } = useContext(Token)
-
-//   return <div className="parentDiv">{token ? <QuotesPage /> : <Login />}</div>
-// }
-
-// export default App
-
 import React, { useState, useEffect } from "react"
 import { useAuth } from "./Context"
 import { QuoteCard } from "./Components/QuoteCard"
@@ -26,23 +12,19 @@ const App = () => {
   const [tags, setTags] = useState([])
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
-  const [sortBy, setSortBy] = useState("upvotesCount")
-  const [sortDirection, setSortDirection] = useState("desc")
   const [quotesCount, setQuotesCount] = useState(0)
 
   useEffect(() => {
     if (token) {
       fetchQuotes()
     }
-  }, [tags, page, pageSize, sortBy, sortDirection, token])
+  }, [tags, page, pageSize, token])
 
   const fetchQuotes = async () => {
     const queryParams = new URLSearchParams({
       tags: tags.join(","),
       page,
       pageSize,
-      sortBy,
-      sortDirection,
     }).toString()
 
     try {
@@ -65,7 +47,7 @@ const App = () => {
 
   return (
     <div className="parentDiv">
-      <h1>Quotes</h1>
+      <h1>To read the quotes of great minds</h1>
       {token ? (
         <>
           <Filter tags={tags} setTags={setTags} />
