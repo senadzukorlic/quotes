@@ -11,7 +11,7 @@ const App = () => {
   const [quotes, setQuotes] = useState([])
   const [tags, setTags] = useState([])
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
+  const [pageSize, setPageSize] = useState(1)
   const [quotesCount, setQuotesCount] = useState(0)
 
   useEffect(() => {
@@ -47,9 +47,9 @@ const App = () => {
 
   return (
     <div className="parentDiv">
-      <h1>To read the quotes of great minds</h1>
       {token ? (
         <>
+          <h1>To read the quotes of great minds</h1>
           <Filter tags={tags} setTags={setTags} />
           <QuoteCard quotes={quotes} />
           <Pagination
@@ -61,7 +61,10 @@ const App = () => {
           />
         </>
       ) : (
-        <Login />
+        <>
+          <h1>Welcome to Quotes site</h1>
+          <Login />
+        </>
       )}
     </div>
   )

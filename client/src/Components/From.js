@@ -9,10 +9,24 @@ export function Form({
 }) {
   return (
     <form className="form" onSubmit={onSubmit}>
-      <input type="text" value={username} onChange={changeUsername} />
-      <input type="password" value={password} onChange={changePassword} />{" "}
+      <input
+        type="text"
+        value={username}
+        onChange={changeUsername}
+        className="form-input"
+        placeholder="Username"
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={changePassword}
+        className="form-input"
+        placeholder="Password"
+      />{" "}
       <br />
-      <button type="submit">Submit</button>
+      <button type="submit" className="form-button">
+        Log In
+      </button>
     </form>
   )
 }

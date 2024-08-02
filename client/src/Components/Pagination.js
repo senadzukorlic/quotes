@@ -1,4 +1,3 @@
-// Pagination.jsx
 import React from "react"
 
 const Pagination = ({ page, setPage, pageSize, setPageSize, total }) => {
@@ -48,7 +47,7 @@ const Pagination = ({ page, setPage, pageSize, setPageSize, total }) => {
           <option value={1}>1 </option>
           <option value={3}>3</option>
           <option value={5}>5</option>
-          <option value={7}>7</option>
+          <option value={7}>All</option>
         </select>
       </div>
     </div>
