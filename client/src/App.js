@@ -1,9 +1,10 @@
+//
+
 import React, { useState, useEffect, useCallback } from "react"
 import { useAuth } from "./Context"
 import { QuoteCard } from "./Components/QuoteCard"
 import Filter from "./Components/Filter"
 import Pagination from "./Components/Pagination"
-
 import Login from "./Pages/LogIn"
 
 const App = () => {
@@ -32,7 +33,6 @@ const App = () => {
       )
       const data = await response.json()
       setQuotes(data.quotes)
-      console.log(data.quotes)
       setQuotesCount(data.quotesCount)
     } catch (error) {
       console.error("Failed to fetch quotes", error)
@@ -45,13 +45,17 @@ const App = () => {
     }
   }, [fetchQuotes, token])
 
+  const handleAddQuote = (newQuote) => {
+    setQuotes((prevQuotes) => [...prevQuotes, newQuote])
+  }
+
   return (
     <div className="parentDiv">
       {token ? (
         <>
           <h1>To read the quotes of great minds</h1>
           <Filter tags={tags} setTags={setTags} />
-          <QuoteCard quotes={quotes} />
+          <QuoteCard quotes={quotes} onAddQuote={handleAddQuote} />
           <Pagination
             page={page}
             setPage={setPage}

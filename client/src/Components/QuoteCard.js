@@ -1,10 +1,17 @@
 import React, { useState } from "react"
 import authorImages from "../assets/authorImages"
+import defaultImage from "../assets/0.jpg"
 import { useAuth } from "../Context"
 
-export function QuoteCard({ quotes }) {
+export function QuoteCard({ quotes, onAddQuote }) {
   const [likedQuotes, setLikedQuotes] = useState({})
   const [dislikedQuotes, setDislikedQuotes] = useState({})
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [newQuote, setNewQuote] = useState({
+    content: "",
+    author: "",
+    tags: "",
+  })
   const { token } = useAuth()
 
   const handleLike = async (id) => {
@@ -58,7 +65,6 @@ export function QuoteCard({ quotes }) {
           },
         })
         setDislikedQuotes((prev) => ({ ...prev, [id]: true }))
-
         if (likedQuotes[id]) {
           await fetch(`http://localhost:8000/quotes/${id}/upvote`, {
             method: "DELETE",
@@ -80,8 +86,54 @@ export function QuoteCard({ quotes }) {
     return Math.round((upvotes / totalVotes) * 100)
   }
 
+  const handleFormSubmit = (e) => {
+    e.preventDefault()
+    onAddQuote({
+      ...newQuote,
+      id: Date.now(),
+      tags: newQuote.tags.split(",").map((tag) => tag.trim()),
+    })
+    setNewQuote({ content: "", author: "", tags: "" })
+    setIsFormOpen(false)
+  }
+
   return (
     <div className="quotesCardDiv">
+      <button onClick={() => setIsFormOpen(!isFormOpen)}>
+        {isFormOpen ? "Close Form" : "Add New Quote"}
+      </button>
+
+      {isFormOpen && (
+        <form onSubmit={handleFormSubmit}>
+          <input
+            type="text"
+            placeholder="Quote"
+            value={newQuote.content}
+            onChange={(e) =>
+              setNewQuote({ ...newQuote, content: e.target.value })
+            }
+            required
+          />
+          <input
+            type="text"
+            placeholder="Author"
+            value={newQuote.author}
+            onChange={(e) =>
+              setNewQuote({ ...newQuote, author: e.target.value })
+            }
+            required
+          />
+          <input
+            type="text"
+            placeholder="Tags (comma separated)"
+            value={newQuote.tags}
+            onChange={(e) => setNewQuote({ ...newQuote, tags: e.target.value })}
+            required
+          />
+          <button type="submit">Add Quote</button>
+        </form>
+      )}
+
       {quotes.map((quote) => {
         const upvotesCount =
           quote.upvotesCount + (likedQuotes[quote.id] ? 1 : 0)
@@ -93,7 +145,7 @@ export function QuoteCard({ quotes }) {
           <div className="quotesCard" key={quote.id}>
             <div className="ImgAndAuthorDiv">
               <img
-                src={authorImages[quote.author]}
+                src={authorImages[quote.author] || defaultImage}
                 alt=""
                 className="author-image"
               />
